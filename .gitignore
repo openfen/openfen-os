@@ -1,0 +1,39 @@
+# Build artifacts
+build/
+dist/
+out/
+*.iso
+*.qcow2
+*.raw
+*.vmdk
+*.vdi
+
+# Temporary files
+*.log
+*.tmp
+*.swp
+*~
+.cache/
+
+# Python
+__pycache__/
+.venv/
+
+# JavaScript
+node_modules/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+secrets/
+*.key
+*.p12
+*.pfx
+
+# Editors
+.idea/
+.vscode/
+
+# System files
+.DS_Store
