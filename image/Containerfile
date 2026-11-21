@@ -29,6 +29,12 @@ RUN dnf -y swap fedora-release generic-release --allowerasing \
     && dnf clean all
 
 # Apply Openfen system identity
+# Install Openfen's custom-built GNOME Settings RPMs.
+COPY rpms/*.rpm /tmp/openfen-rpms/
+RUN dnf -y install /tmp/openfen-rpms/*.rpm \
+    && dnf clean all \
+    && rm -rf /tmp/openfen-rpms
+
 COPY branding/os-release /usr/lib/os-release
 
 # Enable GNOME graphical login
