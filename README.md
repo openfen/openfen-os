@@ -23,6 +23,7 @@ The repository provides a **Fedora 44 bootc-derived GNOME development image** th
 - Openfen login logo and two selectable branded wallpapers, with a charcoal/dark default.
 - A bootc-based system image with a read-only operating-system foundation.
 - Successful VM boot tests with SELinux enforcing and no failed systemd units at the time of testing.
+- Custom Openfen-branded GNOME Settings, including the Openfen logo in Settings → About.
 
 ### Planned, not yet delivered
 
@@ -49,6 +50,8 @@ The Plymouth boot splash is under active development; its appearance and reliabi
 | `image/branding/openfen-backgrounds.xml` | GNOME wallpaper catalogue |
 | `vm/config.toml` | Local VM account configuration (**ignored by Git**) |
 | `vm/*-output/` and `vm/output/` | Generated virtual disks (**ignored by Git**) |
+| `scripts/build-gnome-control-center.sh` | Builds Openfen's custom GNOME Settings RPMs |
+| `packaging/gnome-control-center/` | GNOME Settings RPM specification and branding assets |
 
 ## Developer quick start (Fedora host)
 
@@ -56,13 +59,14 @@ The following workflow targets **Fedora Workstation on x86_64**. Other Linux hos
 
 ### 1. Prerequisites
 
-You will need a CPU with hardware virtualisation (Intel VT-x or AMD-V), internet access, sudo privileges, and enough disk space for container layers and virtual disks. **40 GB of free space** is a practical starting recommendation. A VM allocation of **4 vCPUs and 8 GB RAM** is recommended for desktop testing.
+You will need a CPU with hardware virtualisation (Intel VT-x or AMD-V), internet access, sudo privileges, and enough disk space for container layers and virtual disks. **60 GB of free space** is a practical starting recommendation for development. A VM allocation of **4 vCPUs and 8 GB RAM** is recommended for desktop testing.
 
 Install the tools on your **Fedora host**:
 
 ```bash
 sudo dnf install -y \
   git podman openssl \
+  curl rpm-build mock \
   virt-manager qemu-kvm qemu-img \
   libvirt-daemon-kvm libvirt-daemon-config-network \
   edk2-ovmf
@@ -84,7 +88,15 @@ git clone https://github.com/openfen/openfen-os.git
 cd openfen-os
 ```
 
-### 3. Build the Openfen container image
+### 3. Build custom GNOME Settings
+
+```bash
+bash scripts/build-gnome-control-center.sh
+```
+
+This downloads and verifies the GNOME Control Center source, builds Openfen's customised GNOME Settings packages using Fedora 44 Mock, and places the resulting RPM files in image/rpms/. The subsequent container build installs these packages automatically.
+
+### 4. Build the Openfen container image
 
 ```bash
 sudo podman build \
@@ -98,7 +110,7 @@ This builds the operating-system **container image**, not a bootable QCOW2 disk.
 
 > These instructions use **rootful Podman**. The image builder must access the same container storage where the Openfen image was built.
 
-### 4. Create a local VM account configuration
+### 5. Create a local VM account configuration
 
 Generate a password hash, entering a **unique development-only password** when prompted:
 
@@ -130,7 +142,7 @@ chmod 600 vm/config.toml
 
 **Never commit `vm/config.toml` or share real passwords or password hashes.** The file is ignored by Git. No default development password is distributed.
 
-### 5. Convert the container image to QCOW2
+### 6. Convert the container image to QCOW2
 
 The QCOW2 build uses `bootc-image-builder`. It is separate from `podman build` and **does** use the local `vm/config.toml` file.
 
@@ -158,7 +170,7 @@ qemu-img info vm/output/qcow2/disk.qcow2
 
 The image builder runs with elevated privileges. Only build images and inputs you trust.
 
-### 6. Import the disk into virt-manager
+### 7. Import the disk into virt-manager
 
 1. Start **Virtual Machine Manager** (`virt-manager`).
 2. Select **Create a new virtual machine → Import existing disk image**.
@@ -176,7 +188,7 @@ sudo restorecon -v /var/lib/libvirt/images/openfen-dev.qcow2
 
 Use a **new VM** for each newly generated disk during development. Do not overwrite a disk while its VM is running.
 
-### 7. Verify the running guest
+### 8. Verify the running guest
 
 Run these commands **inside the Openfen VM**, not on the Fedora host:
 
@@ -186,17 +198,14 @@ echo "$XDG_SESSION_TYPE"
 getenforce
 systemctl --failed --no-pager
 sudo bootc status
+rpm -q gnome-control-center
 ```
 
 Check that the OS identifies as Openfen, the session uses Wayland, SELinux is enforcing, and bootc reports a deployment. Visit **Settings → Appearance** to view the Openfen wallpapers. These checks are **not** a security certification.
 
-A newly built VM's hostname may be `localhost` or another default until it is explicitly configured. For a development VM only:
+Open Settings → About and confirm that the Openfen logo is displayed instead of Fedora branding. The installed gnome-control-center RPM should have the fc44.openfen.1 release suffix.
 
-```bash
-sudo hostnamectl set-hostname openfen-dev
-```
-
-### 8. Common development notes
+### 9. Common development notes
 
 - `podman build` stores its result in **local Podman storage**. `git push` does not publish Podman images.
 - `bootc-image-builder` produces a **local QCOW2 disk**, not a GitHub release or a physical-device installer.
