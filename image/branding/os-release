@@ -1,5 +1,6 @@
 NAME="Openfen OS"
 PRETTY_NAME="Openfen OS (Development Preview)"
+DEFAULT_HOSTNAME=openfen-dev
 ID=openfen
 ID_LIKE=fedora
 VERSION="0.1 Development Preview"

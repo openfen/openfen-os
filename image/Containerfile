@@ -18,6 +18,9 @@ RUN dnf -y install \
     ptyxis \
     firefox \
     flatpak \
+    plymouth \
+    plymouth-scripts \
+    plymouth-theme-spinner \
     && dnf clean all
 
 # Replace Fedora release identity with a generic derivative foundation
@@ -27,8 +30,6 @@ RUN dnf -y swap fedora-release generic-release --allowerasing \
 
 # Apply Openfen system identity
 COPY branding/os-release /usr/lib/os-release
-# Default hostname for development images
-RUN printf 'openfen-dev\n' > /etc/hostname
 
 # Enable GNOME graphical login
 RUN systemctl enable --force gdm.service \
@@ -58,6 +59,41 @@ COPY branding/zz-openfen-login.gschema.override \
 # Compile schemas once after all overrides
 RUN glib-compile-schemas /usr/share/glib-2.0/schemas
 
+
+# Openfen Plymouth boot splash
+RUN mkdir -p /usr/share/plymouth/themes/openfen \
+    /usr/lib/bootc/kargs.d \
+    && cp -a /usr/share/plymouth/themes/spinner/. \
+       /usr/share/plymouth/themes/openfen/ \
+    && rm -f \
+       /usr/share/plymouth/themes/openfen/spinner.plymouth \
+       /usr/share/plymouth/themes/openfen/watermark.png \
+       /usr/share/plymouth/themes/openfen/background-tile.png
+
+COPY branding/plymouth/openfen.plymouth \
+    /usr/share/plymouth/themes/openfen/openfen.plymouth
+
+COPY branding/plymouth/watermark.png \
+    /usr/share/plymouth/themes/openfen/watermark.png
+
+COPY branding/plymouth/openfen-kargs.toml \
+    /usr/lib/bootc/kargs.d/90-openfen-splash.toml
+
+# Select Openfen's Plymouth theme
+RUN plymouth-set-default-theme openfen
+
+# Rebuild the image-embedded initramfs with Plymouth
+RUN set -eu; \
+    found=0; \
+    for dir in /usr/lib/modules/*; do \
+        [ -f "$dir/vmlinuz" ] || continue; \
+        found=1; \
+        kver="${dir##*/}"; \
+        DRACUT_NO_XATTR=1 dracut --force \
+            --no-hostonly --no-hostonly-cmdline \
+            "$dir/initramfs.img" "$kver"; \
+    done; \
+    [ "$found" -eq 1 ]
 
 # Validate the bootc image compatibility
 RUN bootc container lint

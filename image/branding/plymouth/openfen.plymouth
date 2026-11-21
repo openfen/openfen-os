@@ -1,0 +1,29 @@
+[Plymouth Theme]
+Name=Openfen
+Description=Openfen OS boot splash
+ModuleName=two-step
+
+[two-step]
+Font=Cantarell 12
+TitleFont=Cantarell Light 30
+ImageDir=/usr/share/plymouth/themes/openfen
+
+DialogHorizontalAlignment=.5
+DialogVerticalAlignment=.5
+
+HorizontalAlignment=.5
+VerticalAlignment=.65
+
+WatermarkHorizontalAlignment=.5
+WatermarkVerticalAlignment=.43
+
+Transition=none
+TransitionDuration=0.0
+
+BackgroundStartColor=0x242424
+BackgroundEndColor=0x242424
+
+ProgressBarBackgroundColor=0x424242
+ProgressBarForegroundColor=0x559F80
+
+MessageBelowAnimation=true
