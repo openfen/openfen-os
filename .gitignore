@@ -37,3 +37,16 @@ secrets/
 
 # System files
 .DS_Store
+
+# Generated virtual machine images
+vm/output/
+vm/gnome-output/
+*.qcow2
+*.raw
+*.vmdk
+
+# Local VM credentials
+vm/config.toml
+
+# Build output
+*.log

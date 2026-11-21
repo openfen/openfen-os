@@ -6,7 +6,7 @@ privacy-first Linux operating system.
 ## Foundation
 
 - Fedora Atomic / bootc
-- KDE Plasma
+- GNOME (Wayland)
 - LUKS2 encrypted persistent storage
 - Mullvad / WireGuard network protection
 - Openfen Connect identity and connection manager
@@ -26,7 +26,7 @@ privacy-first Linux operating system.
 Status: Pre-alpha
 
 The initial development target is a bootable
-Fedora bootc-based KDE Plasma image running under QEMU/KVM.
+Fedora 44 bootc-based GNOME image built and validated at container level. VM boot testing is pending.
 
 ## Project
 

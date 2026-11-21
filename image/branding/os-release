@@ -1,0 +1,11 @@
+NAME="OpenFEN OS"
+PRETTY_NAME="OpenFEN OS (Development Preview)"
+ID=openfen
+ID_LIKE=fedora
+VERSION="0.1 Development Preview"
+VERSION_ID="0.1"
+VARIANT="Privacy Desktop"
+VARIANT_ID=privacy
+IMAGE_ID=openfen
+IMAGE_VERSION="0.1.0-dev"
+ANSI_COLOR="0;35"

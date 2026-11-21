@@ -1,0 +1,36 @@
+# Openfen OS
+# Development preview 0.1
+# Fedora 44 bootc foundation with GNOME
+
+FROM quay.io/fedora/fedora-bootc:44
+
+LABEL org.opencontainers.image.title="OpenFEN OS"
+LABEL org.opencontainers.image.description="Open-source privacy-focused operating system"
+LABEL org.opencontainers.image.version="0.1.0-dev"
+
+# Install the GNOME desktop and essential applications
+RUN dnf -y install \
+    gdm \
+    gnome-shell \
+    gnome-session-wayland-session \
+    gnome-control-center \
+    nautilus \
+    ptyxis \
+    firefox \
+    flatpak \
+    && dnf clean all
+
+# Replace Fedora release identity with a generic derivative foundation
+
+RUN dnf -y swap fedora-release generic-release --allowerasing \
+    && dnf clean all
+
+# Apply OpenFEN system identity
+COPY branding/os-release /usr/lib/os-release
+
+# Enable GNOME graphical login
+RUN systemctl enable --force gdm.service \
+    && systemctl set-default graphical.target
+
+# Validate the bootc image compatibility
+RUN bootc container lint
