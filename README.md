@@ -216,3 +216,11 @@ sudo hostnamectl set-hostname openfen-dev
 Source and issue tracking: [github.com/openfen/openfen-os](https://github.com/openfen/openfen-os).
 
 Openfen's branding, architecture, and release processes will continue to evolve during development.
+
+## Licence
+
+Original Openfen source code is licensed under the
+[GNU GPL v3 or later](LICENSE).
+
+See [LICENSING.md](LICENSING.md) for the scope of this
+licence, third-party dependencies, and branding rights.
