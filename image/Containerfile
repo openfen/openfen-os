@@ -88,7 +88,13 @@ COPY branding/plymouth/openfen-kargs.toml \
 # Select Openfen's Plymouth theme
 RUN plymouth-set-default-theme openfen
 
-# Rebuild the image-embedded initramfs with Plymouth
+# Temporarily provide the /root target required by Dracut.
+# Preserve bootc's /root -> var/roothome symlink.
+RUN test "$(readlink /root)" = "var/roothome" \
+    && test ! -e /var/roothome \
+    && mkdir -m 0700 /var/roothome
+
+# Rebuild the image-embedded initramfs with Plymouth.
 RUN set -eu; \
     found=0; \
     for dir in /usr/lib/modules/*; do \
@@ -101,5 +107,29 @@ RUN set -eu; \
     done; \
     [ "$found" -eq 1 ]
 
-# Validate the bootc image compatibility
+# Restore the bootc filesystem layout.
+RUN rmdir /var/roothome
+
+# Remove disposable build-time state.
+RUN set -eu; \
+    rm -rf \
+        /run/dnf \
+        /run/selinux-policy \
+        /run/tuned \
+        /var/cache/ibus \
+        /var/cache/libX11 \
+        /var/cache/libdnf5 \
+        /var/cache/ldconfig \
+        /var/cache/swcatalog; \
+    rm -f /var/log/dnf5.log*
+
+# Register persistent Openfen service directories.
+COPY systemd/openfen-var.conf \
+    /usr/lib/tmpfiles.d/openfen-var.conf
+
+# Remove disposable package-manager repository metadata.
+RUN rm -rf /var/lib/dnf/repos
+
+
+# Validate bootc image compatibility.
 RUN bootc container lint
