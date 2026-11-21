@@ -50,3 +50,15 @@ vm/config.toml
 
 # Build output
 *.log
+
+# Local VM builds and generated artifacts
+vm/*-output/
+vm/output/
+
+# VM credentials
+vm/config.toml
+
+# Virtual disks
+*.qcow2
+*.raw
+*.vmdk

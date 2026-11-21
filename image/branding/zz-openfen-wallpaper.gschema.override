@@ -1,0 +1,7 @@
+[org.gnome.desktop.background]
+picture-uri='file:///usr/share/backgrounds/openfen/openfen-default.png'
+picture-uri-dark='file:///usr/share/backgrounds/openfen/openfen-default.png'
+picture-options='zoom'
+
+[org.gnome.desktop.interface]
+color-scheme='prefer-dark'

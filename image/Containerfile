@@ -4,7 +4,7 @@
 
 FROM quay.io/fedora/fedora-bootc:44
 
-LABEL org.opencontainers.image.title="OpenFEN OS"
+LABEL org.opencontainers.image.title="Openfen OS"
 LABEL org.opencontainers.image.description="Open-source privacy-focused operating system"
 LABEL org.opencontainers.image.version="0.1.0-dev"
 
@@ -25,12 +25,39 @@ RUN dnf -y install \
 RUN dnf -y swap fedora-release generic-release --allowerasing \
     && dnf clean all
 
-# Apply OpenFEN system identity
+# Apply Openfen system identity
 COPY branding/os-release /usr/lib/os-release
+# Default hostname for development images
+RUN printf 'openfen-dev\n' > /etc/hostname
 
 # Enable GNOME graphical login
 RUN systemctl enable --force gdm.service \
     && systemctl set-default graphical.target
+
+# Openfen visual identity
+RUN mkdir -p \
+    /usr/share/backgrounds/openfen \
+    /usr/share/pixmaps/openfen \
+    /usr/share/gnome-background-properties
+
+# Install official Openfen artwork
+COPY branding/wallpapers/ /usr/share/backgrounds/openfen/
+COPY branding/logos/ /usr/share/pixmaps/openfen/
+
+# Register wallpapers in GNOME Settings
+COPY branding/openfen-backgrounds.xml \
+    /usr/share/gnome-background-properties/openfen.xml
+
+# Apply GNOME desktop and login defaults
+COPY branding/zz-openfen-wallpaper.gschema.override \
+    /usr/share/glib-2.0/schemas/
+
+COPY branding/zz-openfen-login.gschema.override \
+    /usr/share/glib-2.0/schemas/
+
+# Compile schemas once after all overrides
+RUN glib-compile-schemas /usr/share/glib-2.0/schemas
+
 
 # Validate the bootc image compatibility
 RUN bootc container lint

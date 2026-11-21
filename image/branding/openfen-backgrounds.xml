@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE wallpapers SYSTEM "gnome-wp-list.dtd">
+<wallpapers>
+  <wallpaper deleted="false">
+    <name>Openfen — Emblem</name>
+    <filename>/usr/share/backgrounds/openfen/openfen-default.png</filename>
+    <options>zoom</options>
+    <shade_type>solid</shade_type>
+    <pcolor>#242424</pcolor>
+    <scolor>#242424</scolor>
+  </wallpaper>
+  <wallpaper deleted="false">
+    <name>Openfen — Wordmark</name>
+    <filename>/usr/share/backgrounds/openfen/openfen-wordmark.png</filename>
+    <options>zoom</options>
+    <shade_type>solid</shade_type>
+    <pcolor>#242424</pcolor>
+    <scolor>#242424</scolor>
+  </wallpaper>
+</wallpapers>
